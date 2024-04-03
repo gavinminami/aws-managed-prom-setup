@@ -58,6 +58,21 @@ cd prom-iam-roles
 
 Based on instructions from AWS Console -> AWS Managed Prometheus
 
+Note: update `aws-account-id` and `amp-remote-write-url` in prometheus-values.yaml before running `helm upgrade`
+
 ```
 helm upgrade prometheus prometheus-community/prometheus -n default -f prometheus-values.yaml
+```
+
+## Uninstalling Prometheus
+
+```
+helm uninstall prometheus
+```
+
+## Removing Prometheus IAM roles
+
+```
+cd prom-iam-roles
+./cleanup
 ```
