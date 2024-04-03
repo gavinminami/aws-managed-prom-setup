@@ -29,6 +29,18 @@ helm repo update
 helm install prometheus prometheus-community/prometheus
 ```
 
+## Viewing Prometheus Query Interface
+
+1. Setup K8s port forwarding:
+
+```
+kubectl port-forward <prometheus-server-pod-id> 9090:9090
+```
+
+2. (Optional if running kubectl from EC2 instance) Setup port forwarding from laptop to EC2 instance
+
+3. Open browser to http://localhost:9090
+
 ## Create IAM role to allow in-cluster Prometheus to write to AWS managed Prometheus
 
 Based on: https://docs.aws.amazon.com/prometheus/latest/userguide/set-up-irsa.html#set-up-irsa-ingest
@@ -40,4 +52,12 @@ Based on: https://docs.aws.amazon.com/prometheus/latest/userguide/set-up-irsa.ht
 cd prom-iam-roles
 ./createIRSA-AMPIngest.sh
 ./createIRSA-AMPQuery.sh
+```
+
+## Setup remote write to AWS managed Prometheus
+
+Based on instructions from AWS Console -> AWS Managed Prometheus
+
+```
+helm upgrade prometheus prometheus-community/prometheus -n default -f prometheus-values.yaml
 ```
