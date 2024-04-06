@@ -64,6 +64,25 @@ Note: update `aws-account-id` and `amp-remote-write-url` in prometheus-values.ya
 helm upgrade prometheus prometheus-community/prometheus -n default -f prometheus-values.yaml
 ```
 
+## Checking that metrics are being written to AWS Managed Prometheus
+
+You can view the `IngestionRate` and `ActiveSeries` in CloudWatch Metrics.
+
+## Setting up VPC endpoint for AWS Managed Prometheus (optional)
+
+This will allow communicating to AWS Managed Prometheus from the EKS cluster as if it were in the VPC. This will prevent bandwidth usage over the NAT when writing to AWS Managed Prometheus from the in-cluster Prometheus.
+
+1. Navigate to VPC in the AWS console.
+2. Click `Create Endpoint` button.
+3. Enter a name for the endpoint.
+4. For `Service Category`, select `AWS Services`
+5. For `Services`, select `com.amazonaws.<region>.aps-workspaces`
+6. For `VPC`, select the VPC of your EKS cluster.
+7. For `Subnets`, select each of the availability zones and select the private subnet for each of the availability zones.
+8. For `Security Groups`, select or create a security group which permits HTTPS traffic.
+9. For `Policy`, select `Full access`.
+10. Click `Create endpoint`.
+
 ## Uninstalling Prometheus
 
 ```
@@ -76,3 +95,8 @@ helm uninstall prometheus
 cd prom-iam-roles
 ./cleanup
 ```
+
+## Notes
+
+- If you re-create the EKS cluster, the OIDC provider will change and you will need to
+  update or re-create the IRSA roles such that the trust policy references the new OIDC provider.
