@@ -58,9 +58,10 @@ cd prom-iam-roles
 
 Based on instructions from AWS Console -> AWS Managed Prometheus
 
-Note: update `aws-account-id` and `amp-remote-write-url` in prometheus-values.yaml before running `helm upgrade`
+Note: update `aws-account-id` and `amp-remote-write-url` in `prometheus-values.yaml` before running `helm upgrade`
 
 ```
+cd prometheus-helm
 helm upgrade prometheus prometheus-community/prometheus -n default -f prometheus-values.yaml
 ```
 
@@ -72,7 +73,7 @@ You can view the `IngestionRate` and `ActiveSeries` in CloudWatch Metrics.
 
 This will allow communicating to AWS Managed Prometheus from the EKS cluster as if it were in the VPC. This will prevent bandwidth usage over the NAT when writing to AWS Managed Prometheus from the in-cluster Prometheus.
 
-1. Navigate to VPC in the AWS console.
+1. Navigate to VPC -> Endpoints in the AWS console.
 2. Click `Create Endpoint` button.
 3. Enter a name for the endpoint.
 4. For `Service Category`, select `AWS Services`
@@ -82,6 +83,43 @@ This will allow communicating to AWS Managed Prometheus from the EKS cluster as 
 8. For `Security Groups`, select or create a security group which permits HTTPS traffic.
 9. For `Policy`, select `Full access`.
 10. Click `Create endpoint`.
+
+## Installing Grafana in EKS
+
+Based on: https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-query-grafana-7.3.html
+
+### Install Grafana
+
+```
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install grafana grafana/grafana
+```
+
+### Configure Grafana
+
+Note: update `aws-account-id` in `grafana-values.yaml` before running `helm upgrade`
+
+```
+cd grafana
+helm upgrade grafana grafana/grafana -n default -f grafana-values.yaml
+```
+
+Add Prometheus Datasource
+
+1. Click `Add Datasource`.
+2. Select `Prometheus`.
+3. For `Prometheus Server URL`, use the `Endpoint - query URL` from the Managed Prometheus Workspace. Omit the `/api/v1/query` from the value.
+4. For `Authentication Method`, select `SigV4 auth`.
+5. For `SigV4 Auth Details` -> `Authentication Provider`, select `AWS SDK Default`.
+6. For `SigV4 Auth Details` -> `Default Region`, select the region of your EKS cluster.
+7. Click `Save and test` button.
+
+## Uninstalling Grafana
+
+```
+helm uninstall grafana
+```
 
 ## Uninstalling Prometheus
 
