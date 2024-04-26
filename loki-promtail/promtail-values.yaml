@@ -1,0 +1,6 @@
+config:
+  # publish data to loki
+  clients:
+    # note: this is the gateway url if on the same cluster and namespace
+    - url: http://loki-gateway/loki/api/v1/push
+      tenant_id: 1

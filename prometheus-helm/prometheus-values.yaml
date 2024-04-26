@@ -8,9 +8,9 @@ serviceAccounts:
       eks.amazonaws.com/role-arn: "arn:aws:iam::<aws-account-id>:role/amp-iamproxy-ingest-role"
 server:
   remoteWrite:
-    - url: <amp-remote-write-url>
+    - url: https://aps-workspaces.<workspace-region>.amazonaws.com/workspaces/<workspace-id>/api/v1/remote_write
       sigv4:
-        region: us-west-2
+        region: <workspace-region>
       queue_config:
         max_samples_per_send: 1000
         max_shards: 200

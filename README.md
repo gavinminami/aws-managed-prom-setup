@@ -45,7 +45,7 @@ kubectl port-forward <prometheus-server-pod-id> 9090:9090
 
 Based on: https://docs.aws.amazon.com/prometheus/latest/userguide/set-up-irsa.html#set-up-irsa-ingest
 
-1. Update `CLUSTER_NAME` and `SERVICE_ACCOUNT_NAMESPACE` in `prom-iam-roles/sh`
+1. Update `CLUSTER_NAME` and `SERVICE_ACCOUNT_NAMESPACE` in `prom-iam-roles/create*.sh`
 2. Run the following:
 
 ```
@@ -114,6 +114,25 @@ Add Prometheus Datasource
 5. For `SigV4 Auth Details` -> `Authentication Provider`, select `AWS SDK Default`.
 6. For `SigV4 Auth Details` -> `Default Region`, select the region of your EKS cluster.
 7. Click `Save and test` button.
+
+## Installing Loki
+
+```
+helm install loki grafana/loki
+```
+
+## Installing Promtail
+
+```
+cd loki-promtail
+helm upgrade --values promtail-values.yaml --install promtail grafana/promtail
+```
+
+## Creating Loki Datasource in Grafana
+
+If Grafana and Loki are in the same EKS cluster, use `http://loki-gateway` for the Loki URL.
+
+Note: You will need to supply a header `X-Scope-OrgID` with value `1`
 
 ## Uninstalling Grafana
 

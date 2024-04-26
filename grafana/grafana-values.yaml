@@ -5,3 +5,9 @@ serviceAccount:
 grafana.ini:
   auth:
     sigv4_auth_enabled: true
+persistence:
+  enabled: true
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
